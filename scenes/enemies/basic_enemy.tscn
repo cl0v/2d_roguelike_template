@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://c0crcjvv61clp"]
+
+[ext_resource type="PackedScene" uid="uid://cjf7ln8cfsuqy" path="res://scenes/enemy.tscn" id="1_gh0qu"]
+[ext_resource type="Texture2D" uid="uid://cs1nsuohe6opy" path="res://icon.svg" id="2_j54or"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6uufm"]
+radius = 53.0848
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_aq64q"]
+radius = 54.0093
+
+[node name="First Enemy" instance=ExtResource("1_gh0qu")]
+modulate = Color(1, 0.364694, 0.539008, 1)
+self_modulate = Color(1, 0, 1, 1)
+texture = ExtResource("2_j54or")
+
+[node name="Collision" parent="." index="0"]
+shape = SubResource("CircleShape2D_6uufm")
+
+[node name="CollisionShape2D" parent="HitBox" index="0"]
+shape = SubResource("CircleShape2D_aq64q")
+
+[connection signal="area_shape_entered" from="HitBox" to="." method="_on_hit_box_area_shape_entered"]
