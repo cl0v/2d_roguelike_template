@@ -1,27 +1,31 @@
 extends Node2D
 class_name Skill
 # How much HP from enemy the skill should remove
-@export var damage = 1;
-# How much the general skill size should increase
-@export var size = 1.00;
-# How fast the skill should reach the target
-@export var speed = 1.00;
-# How often the speel should be casted in seconds
-@export var cooldown = 1.5
-# How often the player can cast the spells. Auto Attack is also considered a spell
-# Values in percentage
-@export var cooldown_reduction = 0.00 # Initial 0%
+@export var damage = 3;
+#
+## How fast the skill should reach the target
+#@export var speed = 1.00;
 # Critical chance to every skill.
-@export var crit_change = 0.00 # Initial 0%
-# Spell duration in seconds
-@export var duration = 0.1
+@export var crit_chance = 0.00
+# Critical damage start from 200%;
+@export var crit_multiplier = 2.00
+# Spell duration increased by X percent
+@export var duration = 1.00
+# How much the general skill size should increase
+@export var size = 1.00
 
 func _ready():
-	$Timer.wait_time = duration
-
+	$Timer.wait_time *= duration
+	scale *= size
 
 func _on_spell_finished() -> void:
-	if($Timer.is_stopped()):
-		print('Acabou')
-		
-		queue_free()
+	print('Sumiu')
+	queue_free()
+
+func _on_area_area_entered(area: Area2D) -> void:
+	if(area.get_parent() is Enemy):
+		var random_choice = randi() % 100
+		if(random_choice <= crit_chance * 100):
+			damage *= crit_multiplier
+			print("Critou!!")
+		area.get_parent().take_damage(damage)

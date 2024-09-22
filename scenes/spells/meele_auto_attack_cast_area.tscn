@@ -1,0 +1,66 @@
+[gd_scene load_steps=4 format=3 uid="uid://jew0lv34wtw2"]
+
+[ext_resource type="Script" path="res://scenes/spells/meele_auto_attack_info.gd" id="1_powq3"]
+
+[sub_resource type="GDScript" id="GDScript_vpp2r"]
+script/source = "extends Area2D
+
+
+
+var player
+var enemies = []
+#var closest_enemy_position = Vector2.ZERO
+@onready var cast_position = global_position + (Vector2(1,1).normalized() *  $CollisionShape2D.shape.radius)
+
+
+func _process(delta: float) -> void:
+	if(get_parent().target)
+	
+func _on_area_entered(area: Area2D) -> void:
+	if(area.get_parent() is Enemy):
+		enemies.append(area.get_parent())
+
+
+func _on_area_exited(area: Area2D) -> void:
+	if(area.get_parent() is Enemy):
+		enemies.erase(area.get_parent())
+
+func getClosest(closest: Node2D, enemy: Node2D):
+	if(player.global_position - enemy.global_position <  player.global_position - closest.global_position):
+		return enemy
+	else:
+		return closest
+		
+func targetCloseEnemy():
+	var closest_enemy_position = Vector2.ZERO
+	cast_position = global_position + (Vector2(1,1).normalized() *  $CollisionShape2D.shape.radius)
+	
+	if(player != null):
+		if(!enemies.is_empty()):
+			closest_enemy_position = enemies.reduce(getClosest).global_position
+		else:
+			closest_enemy_position = player.global_position + Vector2(40,0)
+		if(global_position.distance_to(closest_enemy_position) > $CollisionShape2D.shape.radius):
+			#print(closest_enemy_position - global_position)
+			cast_position = (global_position.direction_to(closest_enemy_position) * $CollisionShape2D.shape.radius + global_position)
+
+"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pn53a"]
+radius = 84.0536
+
+[node name="MeeleAutoAttackInfos" type="Node2D"]
+script = ExtResource("1_powq3")
+
+[node name="MeeleAutoAttackCastArea" type="Area2D" parent="."]
+script = SubResource("GDScript_vpp2r")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MeeleAutoAttackCastArea"]
+shape = SubResource("CircleShape2D_pn53a")
+
+[node name="Cooldown" type="Timer" parent="."]
+autostart = true
+
+[connection signal="area_entered" from="MeeleAutoAttackCastArea" to="MeeleAutoAttackCastArea" method="_on_area_entered"]
+[connection signal="area_exited" from="MeeleAutoAttackCastArea" to="MeeleAutoAttackCastArea" method="_on_area_exited"]
+[connection signal="timeout" from="Cooldown" to="." method="_on_cast"]

@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://cvjtuuosrwgw5"]
+
+[ext_resource type="PackedScene" uid="uid://bh3munm1xkgjp" path="res://scenes/spell_info.tscn" id="1_twu8m"]
+[ext_resource type="PackedScene" uid="uid://cqkad1g8cutgt" path="res://scenes/spells/meele_auto_attack.tscn" id="2_rrxwl"]
+
+[node name="MeeleAutoAttackInfo" instance=ExtResource("1_twu8m")]
+spell_ref = ExtResource("2_rrxwl")

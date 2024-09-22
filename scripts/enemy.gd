@@ -21,3 +21,10 @@ func _ready():
 func _on_hit_box_area_shape_entered(area_rid: RID, area: Area2D, area_shape_index: int, local_shape_index: int) -> void:
 	#print(area)
 	pass
+
+func take_damage(amount: int):
+	hitpoints -= amount
+	if(hitpoints <= 0):
+		# Drop experience
+		queue_free()
+	

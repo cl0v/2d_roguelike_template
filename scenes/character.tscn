@@ -1,29 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://dl1cck6pkjc04"]
+[gd_scene load_steps=6 format=3 uid="uid://dl1cck6pkjc04"]
 
 [ext_resource type="Script" path="res://scripts/character.gd" id="1_2w3m2"]
 [ext_resource type="Texture2D" uid="uid://cs1nsuohe6opy" path="res://icon.svg" id="2_b5aoq"]
-
-[sub_resource type="GDScript" id="GDScript_am0l3"]
-script/source = "extends Marker2D
-
-var pivot_distance = 40
-var spell_direction = Vector2(1,0)
-
-@onready var spell_load = preload(\"res://scenes/spells/meele_auto_attack.tscn\")
-
-func _process(_delta: float) -> void:
-	if(get_parent().velocity != Vector2.ZERO):
-		position = get_parent().velocity.normalized() * pivot_distance
-		spell_direction = get_parent().velocity.normalized()
-
-
-func _on_recast_timer_timeout() -> void:
-	print('Recast')
-	var spell = spell_load.instantiate()
-	spell.global_position = global_position
-	print(spell.global_position)
-	add_child(spell)
-"
+[ext_resource type="Script" path="res://scripts/spell_list.gd" id="3_p8t7k"]
+[ext_resource type="PackedScene" uid="uid://cvjtuuosrwgw5" path="res://scenes/meele_auto_attack_info.tscn" id="4_kapdm"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_70k37"]
 radius = 18.0
@@ -36,15 +16,10 @@ script = ExtResource("1_2w3m2")
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("2_b5aoq")
 
-[node name="Skills" type="Marker2D" parent="."]
-position = Vector2(40, 0)
-script = SubResource("GDScript_am0l3")
-
-[node name="RecastTimer" type="Timer" parent="Skills"]
-wait_time = 3.0
-autostart = true
-
 [node name="Collision" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_70k37")
 
-[connection signal="timeout" from="Skills/RecastTimer" to="Skills" method="_on_recast_timer_timeout"]
+[node name="SpellList" type="Node2D" parent="."]
+script = ExtResource("3_p8t7k")
+
+[node name="MeeleAutoAttackInfo" parent="SpellList" instance=ExtResource("4_kapdm")]

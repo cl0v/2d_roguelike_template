@@ -5,8 +5,11 @@
 
 [node name="Skill" instance=ExtResource("1_7i8pn")]
 
+[node name="Timer" parent="." index="1"]
+wait_time = 0.1
+
 [node name="Sprite2D" parent="." index="2"]
 modulate = Color(1, 0, 1, 1)
 self_modulate = Color(1, 0, 1, 1)
-scale = Vector2(0.546875, 0.546875)
+scale = Vector2(0.5, 0.5)
 texture = ExtResource("2_8mhrx")

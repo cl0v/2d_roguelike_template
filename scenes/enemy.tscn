@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://cjf7ln8cfsuqy"]
+[gd_scene load_steps=3 format=3 uid="uid://cjf7ln8cfsuqy"]
 
 [ext_resource type="Script" path="res://scripts/enemy.gd" id="1_xtc7p"]
+[ext_resource type="Script" path="res://scripts/enemy_hitbox.gd" id="2_l3o0i"]
 
 [node name="Enemy" type="CharacterBody2D"]
 script = ExtResource("1_xtc7p")
@@ -10,5 +11,6 @@ script = ExtResource("1_xtc7p")
 [node name="Sprite2D" type="Sprite2D" parent="."]
 
 [node name="HitBox" type="Area2D" parent="."]
+script = ExtResource("2_l3o0i")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox"]

@@ -1,0 +1,74 @@
+[gd_scene load_steps=5 format=3 uid="uid://bh3munm1xkgjp"]
+
+[ext_resource type="Script" path="res://scripts/spell_info.gd" id="1_m82xj"]
+[ext_resource type="PackedScene" uid="uid://uh52mgeey82e" path="res://scenes/skill.tscn" id="2_ucw7u"]
+
+[sub_resource type="GDScript" id="GDScript_vpp2r"]
+script/source = "extends Area2D
+
+
+
+var player
+var enemies = []
+#var closest_enemy_position = Vector2.ZERO
+@onready var cast_position = global_position + (Vector2(1,1).normalized() *  $CollisionShape2D.shape.radius)
+
+
+func _process(delta: float) -> void:
+	if(get_parent().target == SpellInfo.Target.CLOSE_ENEMY):
+		targetCloseEnemy()
+	if(get_parent().target == SpellInfo.Target.RANDOM_IN_RANGE):
+		print(\"Random in Range\")
+	if(get_parent().target == SpellInfo.Target.RANDOM_ENEMY):
+		print(\"Random enemy in range\")
+		
+		
+	
+func _on_area_entered(area: Area2D) -> void:
+	if(area.get_parent() is Enemy):
+		enemies.append(area.get_parent())
+
+
+func _on_area_exited(area: Area2D) -> void:
+	if(area.get_parent() is Enemy):
+		enemies.erase(area.get_parent())
+
+func getClosest(closest: Node2D, enemy: Node2D):
+	if(player.global_position - enemy.global_position <  player.global_position - closest.global_position):
+		return enemy
+	else:
+		return closest
+		
+func targetCloseEnemy():
+	var closest_enemy_position = Vector2.ZERO
+	cast_position = global_position + (Vector2(1,1).normalized() *  $CollisionShape2D.shape.radius)
+	
+	if(player != null):
+		if(!enemies.is_empty()):
+			closest_enemy_position = enemies.reduce(getClosest).global_position
+		else:
+			closest_enemy_position = player.global_position + Vector2(40,0)
+		if(global_position.distance_to(closest_enemy_position) > $CollisionShape2D.shape.radius):
+			#print(closest_enemy_position - global_position)
+			cast_position = (global_position.direction_to(closest_enemy_position) * $CollisionShape2D.shape.radius + global_position)
+"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pn53a"]
+radius = 84.0536
+
+[node name="SpellInfo" type="Node2D"]
+script = ExtResource("1_m82xj")
+spell_ref = ExtResource("2_ucw7u")
+
+[node name="CastArea" type="Area2D" parent="."]
+script = SubResource("GDScript_vpp2r")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CastArea"]
+shape = SubResource("CircleShape2D_pn53a")
+
+[node name="Cooldown" type="Timer" parent="."]
+autostart = true
+
+[connection signal="area_entered" from="CastArea" to="CastArea" method="_on_area_entered"]
+[connection signal="area_exited" from="CastArea" to="CastArea" method="_on_area_exited"]
+[connection signal="timeout" from="Cooldown" to="." method="_on_cast"]
